@@ -1,11 +1,17 @@
 {
-  "name": "Milk Farm Monthly Bill",
+  "name": "Milk Farm Monthly Bill Calculator",
   "short_name": "MILK Bill",
-  "description": "Comprehensive bill calculator and management tool for milk farm customers. Supports quick billing, multi-shift data entry (Morning/Evening), data backup (JSON/CSV/PDF), and cloud storage functionality.",
+  "description": "Comprehensive bill calculator and management tool for milk farm customers. Supports quick billing, multi-shift data entry (Morning/Evening), data backup, and cloud storage functionality.",
+  
   "start_url": "/MILK/",
+  "scope": "/MILK/",
+  
   "display": "standalone",
-  "background_color": "#F3F4F6",
-  "theme_color": "#1F2937",
+  "orientation": "portrait",
+  
+  "background_color": "#ffffff",
+  "theme_color": "#4A90E2",
+  
   "icons": [
     {
       "src": "images/android-launchericon-48-48.png",
@@ -38,5 +44,36 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Quick Add Record",
+      "short_name": "Quick Add",
+      "description": "Quickly add records for multiple customers.",
+      "url": "/MILK/?quick_add=1",
+      "icons": [
+        {
+          "src": "images/quick-add-shortcut-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Customer Bills",
+      "short_name": "View Bills",
+      "description": "Go to the list of all registered customers.",
+      "url": "/MILK/?view_customers=1",
+      "icons": [
+        {
+          "src": "images/view-bills-shortcut-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  
+  "lang": "te"
 }
