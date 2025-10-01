@@ -1,8 +1,8 @@
 {
   "name": "Milk Farm Monthly Bill",
   "short_name": "MILK Bill",
-  "description": "Comprehensive bill calculator and management tool for milk farm customers. Features include quick billing, multi-shift data entry (Morning/Evening), data backup (JSON/CSV/PDF), and secure cloud storage.",
-  "start_url": "https://bheemezh.github.io/MILK/",
+  "description": "Comprehensive bill calculator and management tool for milk farm customers. Supports quick billing, multi-shift data entry (Morning/Evening), data backup (JSON/CSV/PDF), and cloud storage functionality.",
+  "start_url": "/MILK/",
   "display": "standalone",
   "background_color": "#F3F4F6",
   "theme_color": "#1F2937",
@@ -15,6 +15,11 @@
     {
       "src": "assets/icons/icon-96x96.png",
       "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-144x144.png",
+      "sizes": "144x144",
       "type": "image/png"
     },
     {
