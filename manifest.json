@@ -54,7 +54,7 @@
       "url": "/MILK/?quick_add=1",
       "icons": [
         {
-          "src": "images/quick-add-shortcut-96x96.png",
+          "src": "images/android-launchericon-96-96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -67,7 +67,7 @@
       "url": "/MILK/?view_customers=1",
       "icons": [
         {
-          "src": "images/view-bills-shortcut-96x96.png",
+          "src": "images/android-launchericon-96-96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
