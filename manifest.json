@@ -60,12 +60,6 @@
     }
   ],
 
-  "display_override": [
-    "window-controls-overlay",
-    "fullscreen",
-    "tabbed" 
-  ],
-
   "categories": [
     "productivity",
     "finance",
