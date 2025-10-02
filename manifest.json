@@ -4,7 +4,7 @@
   "description": "Comprehensive bill calculator and management tool for milk farm customers. Supports quick billing, multi-shift data entry (Morning/Evening), data backup, and cloud storage functionality.",
   "start_url": "/MILK/",
   "scope": "/MILK/",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#4A90E2",
