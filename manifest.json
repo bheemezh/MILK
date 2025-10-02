@@ -2,32 +2,20 @@
   "name": "Milk Farm Monthly Bill Calculator",
   "short_name": "MILK Bill",
   "description": "Comprehensive bill calculator and management tool for milk farm customers. Supports quick billing, multi-shift data entry (Morning/Evening), data backup, and cloud storage functionality.",
-  "id": "/MILK/",
+  "id": "/MILK-APP/",
   "start_url": "/MILK/",
   "scope": "/MILK/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#4A90E2",
+  "lang": "te",
+  "dir": "auto",
+
   "icons": [
     {
       "src": "images/android-launchericon-48-48.png",
       "sizes": "48x48",
-      "type": "image/png"
-    },
-    {
-      "src": "images/android-launchericon-72-72.png",
-      "sizes": "72x72",
-      "type": "image/png"
-    },
-    {
-      "src": "images/android-launchericon-96-96.png",
-      "sizes": "96x96",
-      "type": "image/png"
-    },
-    {
-      "src": "images/android-launchericon-144-144.png",
-      "sizes": "144x144",
       "type": "image/png"
     },
     {
@@ -42,6 +30,7 @@
       "type": "image/png"
     }
   ],
+  
   "shortcuts": [
     {
       "name": "Quick Add Record",
@@ -70,17 +59,19 @@
       ]
     }
   ],
-  "lang": "te",
-  "dir": "auto",
+
   "display_override": [
     "window-controls-overlay",
-    "fullscreen"
+    "fullscreen",
+    "tabbed" 
   ],
+
   "categories": [
     "productivity",
-    "utilities",
-    "finance"
+    "finance",
+    "business"
   ],
+
   "screenshots": [
     {
       "src": "images/screenshot-mobile.png",
@@ -95,31 +86,68 @@
       "form_factor": "wide"
     }
   ],
+
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.bheemezh.milk",
+      "id": "com.bheemezh.milk"
+    }
+  ],
+  "prefer_related_applications": false, 
+
+  "iarc_rating_id": "93693245-c8b5-4148-9c59-b1d3d63e9f33",
+  
+  "scope_extensions": [
+    {
+      "origin": "https://api.bheemezh.github.io"
+    }
+  ],
+
+  "launch_handler": {
+    "client_mode": "navigate-existing" 
+  },
+
+  "file_handlers": [
+    {
+      "action": "/MILK/import-data",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/json": [".milkdata"]
+      }
+    }
+  ],
+
   "share_target": {
-    "action": "/MILK/share-target/",
+    "action": "/MILK/share-data",
     "method": "GET",
-    "enctype": "application/x-www-form-urlencoded",
     "params": {
       "title": "title",
       "text": "text",
       "url": "url"
     }
   },
-  "protocol_handlers": [
+
+  "widgets": [
     {
-      "protocol": "web+milk",
-      "url": "/MILK/add-record?data=%s"
-    }
-  ],
-  "file_handlers": [
-    {
-      "action": "/MILK/import",
-      "accept": {
-        "text/csv": [
-          ".csv"
-        ]
+      "name": "Quick Entry",
+      "description": "Add milk entries quickly without opening the main app.",
+      "tag": "milk_entry_widget",
+      "template": "widgets/quick-entry-template.json",
+      "ms_edge_side_panel": {
+        "url": "/MILK/widgets/quick-entry.html"
       }
     }
   ],
-  "iarc_rating_id": "93693245-c8b5-4148-9c59-b1d3d63e9f33"
+
+  "note_taking": {
+    "new_note_url": "/MILK/new-customer"
+  },
+
+  "protocol_handlers": [
+    {
+      "protocol": "web+milk",
+      "url": "/MILK/app?record=%s"
+    }
+  ]
 }
