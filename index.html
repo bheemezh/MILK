@@ -51,24 +51,60 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-light);
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            padding-bottom: 80px;
-            font-size: 0.95em;
-            color: var(--text-color);
-            box-shadow: 0 8px 25px var(--shadow-color);
-            border-radius: 0;
-            transition: all 0.5s ease-in-out;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            min-height: 100vh;
-            position: relative;
-        }
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background-light);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 80px;
+  font-size: 0.95em;
+  color: var(--text-color);
+  box-shadow: 0 8px 25px var(--shadow-color);
+  border-radius: 0;
+  transition: all 0.5s ease-in-out;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  min-height: 100vh;
+  position: relative;
+}
+
+body.home-page {
+  overflow-y: hidden;
+}
+
+body.customer-records-page {
+  overflow-y: hidden;
+}
+
+body.cloud-page {
+  overflow-y: hidden;
+}
+
+body.bill-page {
+  overflow-y: hidden;
+}
+
+#billModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+#urlbar, #omnibox, #tabs, #toolbar, .web-app-frame {
+  display: none !important;
+}
         
         /* New: Disable vertical scrolling on the home page */
         body.home-page {
