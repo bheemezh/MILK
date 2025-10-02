@@ -1,12 +1,11 @@
-const CACHE = "pwabuilder-offline-page-v2";
+Const CACHE = "pwabuilder-offline-page";
 
-// Import Workbox from a specific version for better control.
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 
 const offlineFallbackPage = "/index.html";
 
-// Your application's essential files list.
-// Workbox will precache these files on installation.
+// మీ అప్లికేషన్ యొక్క ముఖ్యమైన ఫైల్స్ జాబితా.
+// ఈ ఫైల్స్ Service Worker install అయిన వెంటనే క్యాష్ చేయబడతాయి.
 const appShellFiles = [
     offlineFallbackPage,
     '/',
@@ -30,23 +29,8 @@ if (workbox.navigationPreload.isSupported()) {
   workbox.navigationPreload.enable();
 }
 
-// Routing strategy for static assets (CSS, JS, images).
-// Uses CacheFirst, which is great for files that don't change often.
-workbox.routing.registerRoute(
-  /\.(?:css|js|png|gif|jpg|jpeg|svg|ico)$/,
-  new workbox.strategies.CacheFirst({
-    cacheName: 'static-assets-cache',
-    plugins: [
-      new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
-      }),
-    ],
-  })
-);
-
-// Routing strategy for all other requests.
-// StaleWhileRevalidate is a good default, providing both speed and freshness.
+// Routing strategy: Applies StaleWhileRevalidate to all requests (*). 
+// It serves cached content immediately while checking the network for updates.
 workbox.routing.registerRoute(
   new RegExp('/*'),
   new workbox.strategies.StaleWhileRevalidate({
@@ -55,28 +39,24 @@ workbox.routing.registerRoute(
 );
 
 // Fallback logic for navigation requests (HTML pages) when network is unavailable.
-workbox.routing.setCatchHandler(({event}) => {
-  // Return the offline page when a navigation request fails.
+self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
-    return caches.match(offlineFallbackPage);
-  }
-  // For other requests, you could return a different fallback or a custom response.
-  return Response.error();
-});
+    event.respondWith((async () => {
+      try {
+        const preloadResp = await event.preloadResponse;
 
-// Activate event listener to clean up old caches.
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.filter((cacheName) => {
-          // Check if the cache name starts with "pwabuilder-offline-page" but is not the current version.
-          return cacheName.startsWith('pwabuilder-offline-page') && cacheName !== CACHE;
-        }).map((cacheName) => {
-          // Delete the outdated cache.
-          return caches.delete(cacheName);
-        })
-      );
-    })
-  );
-});
+        if (preloadResp) {
+          return preloadResp;
+        }
+
+        const networkResp = await fetch(event.request);
+        return networkResp;
+      } catch (error) {
+        // When the network fails, serve the cached offline fallback page.
+        const cache = await caches.open(CACHE);
+        const cachedResp = await cache.match(offlineFallbackPage);
+        return cachedResp;
+      }
+    })());
+  }
+});, update this with some more
