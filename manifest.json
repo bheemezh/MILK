@@ -2,6 +2,7 @@
   "name": "Milk Farm Monthly Bill Calculator",
   "short_name": "MILK Bill",
   "description": "Comprehensive bill calculator and management tool for milk farm customers. Supports quick billing, multi-shift data entry (Morning/Evening), data backup, and cloud storage functionality.",
+  "id": "/MILK/",
   "start_url": "/MILK/",
   "scope": "/MILK/",
   "display": "standalone",
@@ -74,5 +75,51 @@
   "display_override": [
     "window-controls-overlay",
     "fullscreen"
-  ]
+  ],
+  "categories": [
+    "productivity",
+    "utilities",
+    "finance"
+  ],
+  "screenshots": [
+    {
+      "src": "images/screenshot-mobile.png",
+      "sizes": "426x761",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "images/screenshot-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "share_target": {
+    "action": "/MILK/share-target/",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+milk",
+      "url": "/MILK/add-record?data=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/MILK/import",
+      "accept": {
+        "text/csv": [
+          ".csv"
+        ]
+      }
+    }
+  ],
+  "iarc_rating_id": "93693245-c8b5-4148-9c59-b1d3d63e9f33"
 }
