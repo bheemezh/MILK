@@ -59,4 +59,4 @@ self.addEventListener('fetch', (event) => {
       }
     })());
   }
-});, update this with some more
+});
