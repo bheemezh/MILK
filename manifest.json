@@ -1,0 +1,131 @@
+{
+  "name": "Milk Farm Monthly Bill Calculator",
+  "short_name": "MILK Bill",
+  "description": "Comprehensive bill calculator and management tool for milk farm customers. Supports quick billing, multi-shift data entry (Morning/Evening), data backup, and cloud storage functionality.",
+  "id": "/Milkkk/",
+  "start_url": "/Milkkk/",
+  "scope": "/Milkkk/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#4A90E2",
+  "lang": "te",
+  "dir": "auto",
+
+  "icons": [
+    {
+      "src": "images/android-launchericon-48-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "images/android-launchericon-72-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "images/android-launchericon-96-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "images/android-launchericon-144-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "images/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Quick Add Record",
+      "short_name": "Quick Add",
+      "description": "Quickly add records for multiple customers.",
+      "url": "/Milkkk/?quick_add=1",
+      "icons": [
+        {
+          "src": "images/android-launchericon-96-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Customer Bills",
+      "short_name": "View Bills",
+      "description": "Go to the list of all registered customers.",
+      "url": "/Milkkk/?view_customers=1",
+      "icons": [
+        {
+          "src": "images/android-launchericon-96-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+
+  "categories": [
+    "productivity",
+    "finance",
+    "business"
+  ],
+
+  "screenshots": [
+    {
+      "src": "images/screenshot-mobile.png",
+      "sizes": "426x761",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "images/screenshot-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+milk",
+      "url": "/Milkkk/app?record=%s"
+    }
+  ],
+
+  "share_target": {
+    "action": "/Milkkk/share-data",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+
+  "file_handlers": [
+    {
+      "action": "/Milkkk/import-data",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/json": [".milkdata"]
+      }
+    }
+  ],
+  
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  
+  "display_override": ["fullscreen", "standalone"]
+}
