@@ -5,10 +5,10 @@
   "id": "/",
   "start_url": "/",
   "scope": "/",
-  "display": "standalone",  <-- ఇక్కడ మార్పు జరిగింది
+  "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#FFFFFF",
+  "background_color": "#000000",  <-- డార్క్ మోడ్ స్ప్లాష్ స్క్రీన్ కోసం మార్చబడింది
+  "theme_color": "#000000",       <-- డార్క్ స్టేటస్ బార్ కోసం మార్చబడింది
   "lang": "te",
   "dir": "auto",
   "icons": [
