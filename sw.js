@@ -1,114 +1,7 @@
 // --- Service Worker & Data Worker Implementation ---
 if ('serviceWorker' in navigator) {
-    // 1. Define the internal Data Worker code (Handles DB & Compression)
-    const workerCodeContent = `
-        importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js', 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js', 'https://unpkg.com/comlink/dist/umd/comlink.js');
-        
-        const DB_NAME = 'MilkFarmDB';
-        const DB_VERSION = 2; 
-        
-        const db = new Dexie(DB_NAME);
-        db.version(DB_VERSION).stores({
-            dataStore: '&key, value'
-        });
-
-        function compressData(data) {
-            return new Promise((resolve, reject) => {
-                try {
-                    if (!data) return resolve(null);
-                    // Standard pako deflate to Uint8Array for better storage performance
-                    const compressed = pako.deflate(JSON.stringify(data));
-                    resolve(compressed);
-                } catch (e) { reject(e); }
-            });
-        }
-
-        function decompressData(compressedData) {
-            return new Promise((resolve, reject) => {
-                try {
-                    if (!compressedData) return resolve(null);
-                    const decompressed = pako.inflate(compressedData, { to: 'string' });
-                    resolve(JSON.parse(decompressed));
-                } catch (e) { reject(e); }
-            });
-        }
-
-        const api = {
-            async saveData(key, data) {
-                try {
-                    const compressed = await compressData(data);
-                    await db.dataStore.put({ key: key, value: compressed });
-                } catch (e) {
-                    console.error("Save operation failed:", e);
-                    throw e;
-                }
-            },
-            async loadData(key, defaultValue) {
-                try {
-                    const data = await db.dataStore.get(key);
-                    if (data && data.value) {
-                        return await decompressData(data.value);
-                    }
-                    return defaultValue;
-                } catch (e) {
-                    console.error("Load operation failed:", e);
-                    throw e;
-                }
-            },
-            async loadAllData() {
-                const [priceHistory, records, deletedRecords, customerMetadata, uiColors, currencySymbol, currencyColor, selDimensions] = await Promise.all([
-                    this.loadData('priceHistory', [{ date: '2020-01-01', price: 80 }]),
-                    this.loadData('records', {}),
-                    this.loadData('deletedRecords', {}),
-                    this.loadData('customerMetadata', {}),
-                    this.loadData('uiColors', { header: '#357ABD', totalPayableText: '#333', totalPayableValue: '#357ABD' }),
-                    this.loadData('currencySymbol', '₹'),
-                    this.loadData('currencyColor', '#607D8B'),
-                    this.loadData('selDimensions', { height: 2596, width: 1520 })
-                ]);
-                return { priceHistory, records, deletedRecords, customerMetadata, uiColors, currencySymbol, currencyColor, selDimensions };
-            },
-            async addMultiCustomer(payload) {
-                const { customers, startDate, endDate, newRecord } = payload;
-                const records = await this.loadData('records', {});
-                const customerMetadata = await this.loadData('customerMetadata', {});
-                let totalRecordsAdded = 0;
-                
-                const loopStartDate = new Date(startDate);
-                const loopEndDate = new Date(endDate);
-
-                customers.forEach(customer => {
-                    if (!records[customer]) {
-                        records[customer] = {};
-                        if (!customerMetadata[customer]) {
-                            customerMetadata[customer] = { alternateName: customer };
-                        }
-                    }
-                    let currentDate = new Date(loopStartDate);
-                    while (currentDate <= loopEndDate) {
-                        const dateString = currentDate.toISOString().slice(0, 10);
-                        if (JSON.stringify(records[customer][dateString]) !== JSON.stringify(newRecord)) {
-                            records[customer][dateString] = newRecord;
-                            totalRecordsAdded++;
-                        }
-                        currentDate.setUTCDate(currentDate.getUTCDate() + 1);
-                    }
-                });
-                await this.saveData('records', records);
-                await this.saveData('customerMetadata', customerMetadata);
-                return { totalRecordsAdded, customerCount: customers.length, newRecords: records };
-            },
-            async getCustomerList() {
-                const records = await this.loadData('records', {});
-                return Object.keys(records);
-            }
-        };
-        Comlink.expose(api);
-    `;
-
-    // 2. Define the Service Worker code (Handles Caching & Asset Interception)
     const swCode = `
-        const CACHE_NAME = 'milk-farm-v1';
+        const CACHE_NAME = 'milk-farm-v2'; // Incremented version
         const FAKE_WORKER_URL = 'https://fake-worker/data-worker.js';
 
         const urlsToCache = [
@@ -123,55 +16,80 @@ if ('serviceWorker' in navigator) {
             'https://unpkg.com/comlink/dist/umd/comlink.js',
             FAKE_WORKER_URL
         ];
+        
+        // Data Worker Source Code
+        const workerCodeContent = \` 
+            importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js', 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js', 'https://unpkg.com/comlink/dist/umd/comlink.js');
+            
+            const db = new Dexie('MilkFarmDB');
+            db.version(2).stores({ dataStore: '&key, value' });
 
-        const workerBlobContent = \`${workerCodeContent.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+            const api = {
+                async saveData(key, data) {
+                    const compressed = pako.deflate(JSON.stringify(data)); 
+                    await db.dataStore.put({ key, value: compressed });
+                },
+                async loadData(key, defaultValue) {
+                    const entry = await db.dataStore.get(key);
+                    if (!entry) return defaultValue;
+                    const decompressed = pako.inflate(entry.value, { to: 'string' });
+                    return JSON.parse(decompressed);
+                },
+                async loadAllData() {
+                    return {
+                        priceHistory: await this.loadData('priceHistory', [{ date: '2020-01-01', price: 80 }]),
+                        records: await this.loadData('records', {}),
+                        customerMetadata: await this.loadData('customerMetadata', {}),
+                        uiColors: await this.loadData('uiColors', { header: '#357ABD' }),
+                        currencySymbol: await this.loadData('currencySymbol', '₹')
+                    };
+                }
+            };
+            Comlink.expose(api);
+        \`;
 
+        // Install Event: Cache all assets and the fake worker
         self.addEventListener('install', event => {
+            self.skipWaiting(); // Force activation
             event.waitUntil(
                 caches.open(CACHE_NAME).then(cache => {
                     return cache.addAll(urlsToCache).then(() => {
-                        const workerBlob = new Blob([workerBlobContent], { type: 'application/javascript' });
-                        return cache.put(FAKE_WORKER_URL, new Response(workerBlob));
+                        const blob = new Blob([workerCodeContent], { type: 'application/javascript' });
+                        return cache.put(FAKE_WORKER_URL, new Response(blob));
                     });
                 })
             );
         });
 
-        self.addEventListener('fetch', event => {
-            const url = new URL(event.request.url);
-            
-            // Serve cached index for root navigation
-            if (url.origin === self.location.origin && (url.pathname === '/index.html' || url.pathname === '/')) {
-                event.respondWith(caches.match('/').then(res => res || fetch(event.request)));
-                return;
-            }
-
-            // Intercept requests for the virtual data worker
-            if (event.request.url === FAKE_WORKER_URL) {
-                event.respondWith(caches.match(FAKE_WORKER_URL));
-                return;
-            }
-
-            // General cache-first strategy
-            event.respondWith(
-                caches.match(event.request).then(response => response || fetch(event.request))
+        // Activate Event: Clean up old caches
+        self.addEventListener('activate', event => {
+            event.waitUntil(
+                Promise.all([
+                    self.clients.claim(),
+                    caches.keys().then(keys => Promise.all(
+                        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+                    ))
+                ])
             );
         });
 
-        self.addEventListener('activate', event => {
-            event.waitUntil(
-                caches.keys().then(keys => Promise.all(
-                    keys.map(key => { if (key !== CACHE_NAME) return caches.delete(key); })
-                ))
+        // Fetch Event: Serve from cache first, then network
+        self.addEventListener('fetch', event => {
+            event.respondWith(
+                caches.match(event.request).then(response => {
+                    return response || fetch(event.request).catch(() => {
+                        if (event.request.mode === 'navigate') return caches.match('/');
+                    });
+                })
             );
         });
     `;
 
-    // 3. Register the SW using a Blob
+    // Create Blob and Register
     const swBlob = new Blob([swCode], { type: 'application/javascript' });
     const swURL = URL.createObjectURL(swBlob);
 
-    navigator.serviceWorker.register(swURL)
-        .then(reg => console.log('MilkFarm Service Worker Active'))
-        .catch(err => console.error('SW Registration Failed:', err));
+    navigator.serviceWorker.register(swURL, { scope: './' })
+        .then(reg => console.log('Offline Engine Ready'))
+        .catch(err => console.error('Offline Setup Failed', err));
 }
